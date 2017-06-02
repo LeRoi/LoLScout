@@ -39,8 +39,13 @@ def query_with_retries(query, retries=3):
             time.sleep(10)
     return response
 
-def response_has_key(response, key):
-    """Returns the value
+def response_at(query, response, key):
+    """Returns the value associated with key, if it exists.
+
+    Throws generic exception if key does not exist."""
+    if key not in response.keys():
+        raise Exception("Incorrect data returned for key %s.\nQuery:\n%s\nResponse:\n%s" % (key, query, response))
+    return response[key]
 
 summoner_name_query = "https://na1.api.riotgames.com/lol/summoner/v3/summoners/by-name/%s?api_key=%s"
 def get_summoner_id(summoner_name, api_key):
@@ -52,11 +57,7 @@ def get_summoner_id(summoner_name, api_key):
     response_name = summoner_name.replace(" ", "").lower()
     query = summoner_name_query % (query_name, api_key)
     summoner_id = query_with_retries(query)
-    
-    if "id" not in summoner_id.keys():
-        raise Exception("Incorrect data returned.\nQuery:\n%s\nResponse:\n%s" % (query, summoner_id))
-
-    return summoner_id["id"]
+    return response_at(query, summoner_id, "id")
 
 # Distinct from summoner account id query
 summoner_id_query = "https://na1.api.riotgames.com/lol/summoner/v3/summoners/%s?api_key=%s"
@@ -72,7 +73,17 @@ def get_summoner_names(summoner_ids, api_key):
     for summoner_id in summoner_ids:
         query = summoner_id_query % (summoner_id, api_key)
         summoner_name = query_with_retries(query)
-        if "name" not in summoner_name.keys():
-            raise Exception("In
-        names.append(summoner_name["name"].title())
+        names.append(response_at(query, summoner_name, "name").title())
     return names
+
+item_query = https://na1.api.riotgames.com/lol/static-data/v3/items?api_key=%s"
+def get_item_data(api_key):
+    return query_riot_api(item_query % api_key)
+
+champion_query = "https://na1.api.riotgames.com/lol/static-data/v3/champions?api_key=%s"
+def get_champion_data(api_key):
+    return query_riot_api(champion_query % api_key)
+
+spell_query = "https://na1.api.riotgames.com/lol/static-data/v3/summoner-spells?api_key=%s"
+def get_summoner_spell_data(api_key):
+    return query_riot_api(spell_query % api_key)
