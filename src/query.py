@@ -20,6 +20,7 @@ def query_riot_api(query):
     try:
         json_data = json.loads(raw_data[0])
     except ValueError:
+        print json_data
         raise_exception(404)
 
     if 'status' in json_data.keys():
