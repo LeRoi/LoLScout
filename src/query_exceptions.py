@@ -1,15 +1,6 @@
 # query_exceptions.py
 # General API exception handling
 
-exceptions = {
-    400: q400Exception,
-    401: q401Exception,
-    404: q404Exception,
-    429: q429Exception,
-    500: q500Exception,
-    503: q503Exception
-}
-
 def valid_exceptions():
     return exceptions.keys()
 
@@ -48,3 +39,11 @@ class q503Exception(Exception):
     def __init__(self):
         Exception.__init__(self, "Service unavailable. Try again later.")
 
+exceptions = {
+    400: q400Exception,
+    401: q401Exception,
+    404: q404Exception,
+    429: q429Exception,
+    500: q500Exception,
+    503: q503Exception
+}
