@@ -20,14 +20,13 @@ def query_riot_api(query):
     try:
         json_data = json.loads(raw_data[0])
     except ValueError:
-        print json_data
         raise_exception(404)
 
     if 'status' in json_data.keys():
         if 'status_code' not in json_data['status'].keys():
             raise Exception("Poorly formatted data returned on query: " + str(query))
         else:
-            raise_exception(json_data['status']['status_code'])
+            raise_exception(json_data['status']['status_code'], query, json_data)
 
     return json_data
 
@@ -54,7 +53,7 @@ def response_at(query, response, key):
     return response[key]
 
 summoner_name_query = "https://na1.api.riotgames.com/lol/summoner/v3/summoners/by-name/%s?api_key=%s"
-def get_summoner_id(summoner_name, api_key):
+def get_summoner_id(summoner_name, api_key, request_account_id=True):
     """Returns the ID associated with the summoner name provided.
 
     Throws 400, 401, 404, 429, 501, 503, and generic exceptions."""
@@ -63,7 +62,7 @@ def get_summoner_id(summoner_name, api_key):
     response_name = summoner_name.replace(" ", "").lower()
     query = summoner_name_query % (query_name, api_key)
     summoner_id = query_with_retries(query)
-    return response_at(query, summoner_id, "id")
+    return response_at(query, summoner_id, "accountId" if request_account_id else "id")
 
 # Distinct from summoner account id query
 summoner_id_query = "https://na1.api.riotgames.com/lol/summoner/v3/summoners/%s?api_key=%s"
