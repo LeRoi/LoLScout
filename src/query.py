@@ -81,13 +81,23 @@ def get_summoner_names(summoner_ids, api_key):
         names.append(response_at(query, summoner_name, "name").title())
     return names
 
-match_query = "https://na1.api.riotgames.com/lol/match/v3/matchlists/by-account/%s/recent?api_key=%s"
+recent_matches_query = "https://na1.api.riotgames.com/lol/match/v3/matchlists/by-account/%s/recent?api_key=%s"
 def get_recent_matches(summoner_name, api_key):
     """Returns JSON array of match data."""
     summoner_id = get_summoner_id(summoner_name, api_key)
-    query = match_query % (summoner_id, api_key)
+    query = recent_matches_query % (summoner_id, api_key)
     match_history = query_with_retries(query)
-    return response_at(query, match_history, "games")
+    return response_at(query, match_history, "matches")
+
+match_query = "https://na1.api.riotgames.com/lol/match/v3/matches/%s?api_key=%s"
+def get_match(match_id, api_key):
+    query = match_query % (match_id, api_key)
+    return query_with_retries(query)
+
+def get_latest_match(summoner_name, api_key):
+    matches = get_recent_matches(summoner_name, api_key)
+    game_id = matches[0]['gameId']
+    return get_match(game_id, api_key)
 
 item_query = "https://na1.api.riotgames.com/lol/static-data/v3/items?api_key=%s"
 def get_item_data(api_key):
