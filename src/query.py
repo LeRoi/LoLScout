@@ -103,9 +103,10 @@ item_query = "https://na1.api.riotgames.com/lol/static-data/v3/items?api_key=%s"
 def get_item_data(api_key):
     return query_riot_api(item_query % api_key)
 
-champion_query = "https://na1.api.riotgames.com/lol/static-data/v3/champions?api_key=%s"
+champion_query = "https://na1.api.riotgames.com/lol/static-data/v3/champions?dataById=true&api_key=%s"
 def get_champion_data(api_key):
-    return query_riot_api(champion_query % api_key)
+    query = champion_query % api_key
+    return response_at(query, query_riot_api(query), "data")
 
 spell_query = "https://na1.api.riotgames.com/lol/static-data/v3/summoner-spells?api_key=%s"
 def get_summoner_spell_data(api_key):
